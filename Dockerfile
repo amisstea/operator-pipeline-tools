@@ -1,7 +1,8 @@
 FROM registry.access.redhat.com/ubi8/python-39:latest
 
 ENV SUMMARY="Tools for Red Hat operator certification pipelines" \
-    DESCRIPTION="Tools for Red Hat operator certification pipelines"
+    DESCRIPTION="Tools for Red Hat operator certification pipelines" \
+    TESTS_HOME="$HOME/tests"
 
 LABEL summary="$SUMMARY" \
       description="$DESCRIPTION" \
@@ -26,5 +27,11 @@ RUN AWS_CLI_URL="https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" && \
     unzip $HOME/awscli.zip && \
     $HOME/aws/install -i $HOME/.local/aws-cli -b $HOME/.local/bin && \
     rm -rf $HOME/aws/install $HOME/awscli.zip
+
+# Install some sample test suite
+RUN git clone --depth 1 https://github.com/pluralsight/intro-to-pytest $HOME/tests && \
+    cd $HOME/tests && \
+    pip install -r requirements.txt && \
+    pip install pytest-html
 
 RUN pip install yq
